@@ -2,8 +2,7 @@ import sys
 import hal_simplicity_py as pyhalsim
 
 def main1():
-    pyhalsim.setup_logger("debug")
-
+    pyhalsim.setup_logger("info")
     modulename = "pyhalsim"
     funcname = "run_cli_command"
 
@@ -11,6 +10,7 @@ def main1():
         cli_args = sys.argv[1:]
         cmdline = " ".join(cli_args)
         ret = pyhalsim.run_cli_command(cmdline)
+        print(ret)
     else:
         print(f"Could not find 'run_cli_command' in module '{modulename}'.")
 
