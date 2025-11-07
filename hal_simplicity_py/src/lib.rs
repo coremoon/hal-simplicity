@@ -89,18 +89,19 @@ fn init_app<'a, 'b>() -> App<'a, 'b> {
 		)
 }
 
-/// Try to execute built-in command.  
-/// Returns `false` if no command found.
-fn execute_builtin<'a>(matches: &ArgMatches<'a>) -> bool {
-	match matches.subcommand() {
+/// Execute built-in command and return the output
+/// NOTE: This assumes the stdout-fix has been merged, where execute() returns Result<String, CmdError>
+fn execute_builtin<'a>(matches: &ArgMatches<'a>) -> Result<String, String> {
+	let result = match matches.subcommand() {
 		("address", Some(m)) => cmd::address::execute(m),
 		("block", Some(m)) => cmd::block::execute(m),
 		("keypair", Some(m)) => cmd::keypair::execute(m),
 		("simplicity", Some(m)) => cmd::simplicity::execute(m),
 		("tx", Some(m)) => cmd::tx::execute(m),
-		_ => return false,
+		_ => return Err("Unknown command".to_string()),
 	};
-	true
+	
+	result.map_err(|e| e.to_string())
 }
 
 #[pyfunction]
@@ -124,11 +125,9 @@ fn run_cli_command(cmdline: &str) -> PyResult<String> {
 			.get_matches_from_safe(args)
 			.map_err(|e| format!("Argument parsing failed: {}", e))?;
 
-		if execute_builtin(&matches) {
-			Ok("Command executed successfully".to_string())
-		} else {
-			Err(format!("Subcommand not found: {}", matches.subcommand_name().unwrap_or("")))
-		}
+		// Execute and return actual command output
+		// This works once stdout-fix is merged
+		execute_builtin(&matches)
 	});
 
 	match result {
