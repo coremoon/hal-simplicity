@@ -3,11 +3,7 @@ use std::process;
 
 pub use elements::bitcoin;
 
-pub use hal_simplicity::{GetInfo, Network};
-
-// pub mod cmd;
-use hal_simplicity::cmd;
-
+pub use hal_simplicity::{GetInfo, Network, cmd};
 
 /// Setup logging with the given log level.
 fn setup_logger(lvl: log::LevelFilter) {
@@ -40,7 +36,7 @@ fn init_app<'a, 'b>() -> clap::App<'a, 'b> {
 
 /// Try execute built-in command. Return false if no command found.
 fn execute_builtin<'a>(matches: &clap::ArgMatches<'a>) -> bool {
-	match matches.subcommand() {
+	let result = match matches.subcommand() {
 		("address", Some(m)) => cmd::address::execute(m),
 		("block", Some(m)) => cmd::block::execute(m),
 		("keypair", Some(m)) => cmd::keypair::execute(m),
@@ -48,6 +44,20 @@ fn execute_builtin<'a>(matches: &clap::ArgMatches<'a>) -> bool {
 		("tx", Some(m)) => cmd::tx::execute(m),
 		_ => return false,
 	};
+	
+	// Handle the result for CLI compatibility
+	match result {
+		Ok(output) => {
+			if !output.is_empty() {
+				println!("{}", output);
+			}
+		}
+		Err(e) => {
+			eprintln!("Error: {}", e);
+			process::exit(1);
+		}
+	}
+	
 	true
 }
 
@@ -82,4 +92,3 @@ fn main() {
 		panic!("Subcommand not found: {}", matches.subcommand().0);
 	}
 }
-

@@ -1,26 +1,10 @@
-// pub fn add(left: u64, right: u64) -> u64 {
-// 	left + right
-// }
-
-// #[cfg(test)]
-// mod tests {
-// 	use super::*;
-
-// 	#[test]
-// 	fn it_works() {
-// 		let result = add(2, 2);
-// 		assert_eq!(result, 4);
-// 	}
-// }
-
-
-
 pub extern crate simplicity;
 
 pub mod address;
 pub mod block;
 pub mod hal_simplicity;
 pub mod tx;
+pub mod cmd;
 
 pub mod confidential;
 
@@ -29,11 +13,6 @@ pub use hal::HexBytes;
 
 use elements::AddressParams;
 use serde::{Deserialize, Serialize};
-
-//
-pub mod cmd;
-
-//
 
 /// Known Elements networks.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Deserialize, Serialize)]

@@ -6,10 +6,10 @@ use crate::cmd;
 use super::{Error, ErrorExt as _};
 
 use elements::hashes::Hash;
-use crate as hal_simplicity;
 use hal_simplicity::simplicity::bitcoin::secp256k1::{
 	schnorr, Keypair, Message, Secp256k1, SecretKey,
 };
+use crate as hal_simplicity;
 use hal_simplicity::simplicity::bitcoin::{Amount, Denomination};
 use hal_simplicity::simplicity::elements::hashes::sha256;
 use hal_simplicity::simplicity::elements::hex::FromHex;
@@ -105,7 +105,7 @@ pub fn cmd<'a>() -> clap::App<'a, 'a> {
 		])
 }
 
-pub fn exec<'a>(matches: &clap::ArgMatches<'a>) {
+pub fn exec<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	let tx_hex = matches.value_of("tx").expect("tx mandatory");
 	let input_idx = matches.value_of("input-index").expect("input-idx is mandatory");
 	let cmr = matches.value_of("cmr").expect("cmr is mandatory");
@@ -127,8 +127,8 @@ pub fn exec<'a>(matches: &clap::ArgMatches<'a>) {
 		signature,
 		&input_utxos,
 	) {
-		Ok(info) => cmd::print_output(matches, &info),
-		Err(e) => cmd::print_output(matches, &e),
+		Ok(info) => cmd::serialize_output(matches, &info),
+		Err(e) => cmd::serialize_output(matches, &e),
 	}
 }
 

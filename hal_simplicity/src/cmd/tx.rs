@@ -13,9 +13,9 @@ use elements::{
 	TxOutWitness,
 };
 use log::warn;
-use crate as hal_simplicity;
 
 use crate::cmd;
+use crate as hal_simplicity;
 use hal_simplicity::confidential::{
 	ConfidentialAssetInfo, ConfidentialNonceInfo, ConfidentialType, ConfidentialValueInfo,
 };
@@ -31,12 +31,12 @@ pub fn subcommand<'a>() -> clap::App<'a, 'a> {
 		.subcommand(cmd_decode())
 }
 
-pub fn execute<'a>(matches: &clap::ArgMatches<'a>) {
+pub fn execute<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	match matches.subcommand() {
 		("create", Some(m)) => exec_create(m),
 		("decode", Some(m)) => exec_decode(m),
 		(_, _) => unreachable!("clap prints help"),
-	};
+	}
 }
 
 fn cmd_create<'a>() -> clap::App<'a, 'a> {
@@ -437,16 +437,18 @@ pub fn create_transaction(info: TransactionInfo) -> Transaction {
 	}
 }
 
-fn exec_create<'a>(matches: &clap::ArgMatches<'a>) {
+fn exec_create<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	let info = serde_json::from_str::<TransactionInfo>(&cmd::arg_or_stdin(matches, "tx-info"))
 		.expect("invalid JSON provided");
 	let tx = create_transaction(info);
 
 	let tx_bytes = serialize(&tx);
 	if matches.is_present("raw-stdout") {
-		::std::io::stdout().write_all(&tx_bytes).unwrap();
+		::std::io::stdout().write_all(&tx_bytes)
+			.map_err(|e| crate::cmd::CmdError::IoError(e.to_string()))?;
+		Ok(String::new())
 	} else {
-		print!("{}", hex::encode(&tx_bytes));
+		Ok(hex::encode(&tx_bytes))
 	}
 }
 
@@ -456,11 +458,11 @@ fn cmd_decode<'a>() -> clap::App<'a, 'a> {
 		.args(&[cmd::opt_yaml(), cmd::arg("raw-tx", "the raw transaction in hex").required(false)])
 }
 
-fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) {
+fn exec_decode<'a>(matches: &clap::ArgMatches<'a>) -> Result<String, crate::cmd::CmdError> {
 	let hex_tx = cmd::arg_or_stdin(matches, "raw-tx");
 	let raw_tx = hex::decode(hex_tx.as_ref()).expect("could not decode raw tx");
 	let tx: Transaction = deserialize(&raw_tx).expect("invalid tx format");
 
 	let info = crate::GetInfo::get_info(&tx, cmd::network(matches));
-	cmd::print_output(matches, &info)
+	cmd::serialize_output(matches, &info)
 }
