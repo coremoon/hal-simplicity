@@ -1,6 +1,5 @@
 __pycache__/
 /target
-/.github
 /.venv
 .rustfmt.toml
 Cargo.lock
