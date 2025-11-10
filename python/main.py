@@ -1,15 +1,15 @@
 import sys
-import hal_simplicity_py as pyhalsim
+import pyhalsimplicity
 
 def main1():
-    pyhalsim.setup_logger("info")
-    modulename = "pyhalsim"
+    pyhalsimplicity.setup_logger("info")
+    modulename = "pyhalsimplicity"
     funcname = "run_cli_command"
 
-    if hasattr(pyhalsim, funcname) and callable(getattr(pyhalsim, funcname)):
+    if hasattr(pyhalsimplicity, funcname) and callable(getattr(pyhalsimplicity, funcname)):
         cli_args = sys.argv[1:]
         cmdline = " ".join(cli_args)
-        ret = pyhalsim.run_cli_command(cmdline)
+        ret = pyhalsimplicity.run_cli_command(cmdline)
         print(ret)
     else:
         print(f"Could not find 'run_cli_command' in module '{modulename}'.")

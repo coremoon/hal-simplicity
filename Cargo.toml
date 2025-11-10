@@ -4,6 +4,6 @@ resolver = "3"
 members = [
     "hal_simplicity",
     "hal_simplicity_app",
-    "hal_simplicity_py"
+    "pyhalsimplicity"
 ]
 

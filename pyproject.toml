@@ -1,9 +1,28 @@
-[tool.poetry]
-name = "hal-simplicity"
+[project]
+name = "pyhalsimplicity"
 version = "0.1.0"
 description = "Python bindings and CLI for hal-simplicity via PyO3"
-authors = ["anonym <anonym@example.com>"]
-packages = [{ include = "hal_simplicity" }]
+readme = "README.md"
+authors = [
+  { name = "coremoon", email = "237020170+coremoon@users.noreply.github.com" }
+]
+requires-python = ">=3.9"
+
+[tool.poetry]
+name = "pyhalsimplicity"
+version = "0.1.0"
+description = "Python bindings and CLI for hal-simplicity via PyO3"
+authors = ["coremoon <237020170+coremoon@users.noreply.github.com>"]
+
+[build-system]
+requires = ["maturin>=1.7,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+manifest-path = "pyhalsimplicity/Cargo.toml"
+long-description = "README.md"
+long-description-content-type = "text/markdown"
+
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -17,11 +36,8 @@ pytest = "^8.0"
 [tool.poe.tasks.build-wheel]
 shell = """
 cargo build &&
-maturin build --manifest-path hal_simplicity_py/Cargo.toml &&
-poetry run pip install --force-reinstall "$(ls -t target/wheels/hal_simplicity_py*.whl | head -n 1)"
+maturin build --manifest-path pyhalsimplicity/Cargo.toml &&
+poetry run pip install --force-reinstall "$(ls -t target/wheels/pyhalsimplicity*.whl | head -n 1)"
 """
 
 
-[build-system]
-requires = ["maturin>=1.7,<2.0"]
-build-backend = "maturin"

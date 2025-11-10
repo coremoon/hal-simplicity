@@ -146,9 +146,9 @@ fn run_cli_command(cmdline: &str) -> PyResult<String> {
 	}
 }
 
-/// Hauptmodul-Definition (PyO3 0.25-Syntax).
+/// Module-Definition (PyO3 0.25-Syntax).
 #[pymodule]
-fn hal_simplicity_py(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn pyhalsimplicity(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
 	m.add_function(wrap_pyfunction!(run_cli_command, m)?)?;
 	m.add_function(wrap_pyfunction!(do_something, m)?)?;
 	m.add_function(wrap_pyfunction!(setup_logger, m)?)?;
