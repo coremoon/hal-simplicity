@@ -7,53 +7,126 @@ which in turn is an extension of his Bitcoin tool [hal](https://github.com/steve
 
 This project is a research study to create a convinient python interface to hal-simplicity
 
-# Installation
+## Usage (Python)
 
-First build the complete rust project
+`pyhalsimplicity` provides Python bindings for the HAL-Simplicity library. You can invoke its CLI commands directly from Python using the `run_cli_command` function.
+
+### Installation
+
+```bash
+pip install pyhalsimplicity
+```
+
+### Basic Example
+
+```python
+import sys
+import pyhalsimplicity
+
+def main():
+    # Setup logging (optional)
+    pyhalsimplicity.setup_logger("info")
+    
+    # Prepare the CLI command as a space-separated string
+    cli_args = sys.argv[1:]
+    cmdline = " ".join(cli_args)
+    
+    # Execute the command
+    result = pyhalsimplicity.run_cli_command(cmdline)
+    
+    print(result)
+
+    # Uncomment to see the internal logger buffer
+    # print(pyhalsimplicity.get_logs(), flush=True)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Example Usage
+
+```bash
+python example.py tx create ...
+python example.py keypair generate
+```
+
+### Features
+
+* Run all built-in HAL-Simplicity CLI commands from Python.
+* Capture logs via `setup_logger` and `get_logs`.
+* Supports scripting HAL-Simplicity commands in Python workflows.
+
+### GitHub Repository
+
+The source code and development repository is available at:
+[https://github.com/coremoon/hal-simplicity](https://github.com/coremoon/hal-simplicity)
+
+Please note that the sources have been forked from the original project 
+[https://github.com/blockstreamresearch/hal-simplicity](hhttps://github.com/blockstreamresearch/hal-simplicity)
+
+
+## Installation (from GitHub source)
+
+> ⚠️ This section is **only relevant if you are building from the GitHub repository**.
+> If you installed `pyhalsimplicity` from PyPI, you can skip this.
+
+To build the Python wheel and CLI binaries directly from source, follow these steps:
+
+1. **Build the complete Rust project**
+   The resulting binary (`hal-simplicity` or `hal-simplicity.exe` on Windows) will be in `target/debug` or `target/release`.
+
 ```bash
 cargo build
 ```
-and you should find the binary `hal-simplicity` (`hal-simplicity.exe` on windows) in the target folder `debug` or `release`.
 
-Now create a python environment ...
+2. **Create and activate a Python virtual environment**
+
 ```bash
 python -m venv .venv
-```
-... and activate it
-```bash
-. .venv/bin/activate # linux/mac 
-. .venv/Scripts/activate # windows (git-bash)
+# Activate:
+. .venv/bin/activate      # Linux / macOS
+. .venv/Scripts/activate  # Windows (Git Bash)
 ```
 
-Let poetry add missing libraries with
+3. **Install Python dependencies using Poetry**
+
 ```bash
 poetry update
 ```
 
-Now build the debug wheel (to be found in folder debug/wheel)
+4. **Build the Python wheel**
+
+* Debug wheel (located in `target/wheels`):
+
 ```bash
-maturin build --manifest-path hal_simplicity_py/Cargo.toml
-```
-or the release build  (to be found in folder relöease/wheel)
-```bash
-maturin build --manifest-path hal_simplicity_py/Cargo.toml --release
+maturin build --manifest-path pyhalsimplicity/Cargo.toml
 ```
 
-A quick install (i.e. a forced reinstall) of the newly compiled wheel could look like this, assuming at least one whl file exists.
+* Release wheel (optimized build):
+
 ```bash
-poetry run pip install --force-reinstall "$(ls -t target/wheels/hal_simplicity_py*.whl | head -n 1)"
+maturin build --manifest-path pyhalsimplicity/Cargo.toml --release
 ```
 
-If you want to do all at once you may test this `poe` command (make sure the `venv` is activated)
+5. **Quick install of the newly built wheel**
+
+```bash
+poetry run pip install --force-reinstall "$(ls -t target/wheels/pyhalsimplicity*.whl | head -n 1)"
+```
+
+6. **Optional: run everything in one step via `poe`**
+
 ```bash
 poetry run poe build-wheel
 ```
-# test
+
+7. **Optional: decode a simplicity binary via `poetry run python` in the terminal**
 try running 
 ```bash
  poetry run python -m python.main simplicity info e4fba0509b4df120e1d320451f14172c46476646daf8d0d6da80e84c986cc5e073f80ed4dcf0210284187248126ac8e671544245742660022ae160c5e14b09ec0c2a17584bf5c548c85961c02b6efc010c03109ad2420c3f00140b16ab91cd75dcbc1e84ea7a320719cbfc6dc95e5194f9eca996d55a7b2d768c511e2a310e1806240a1241b70a35627302ef7da851f75a1f471748121a2b6978930a58ccaee2309401bd1b6e9fcbb0018601881a80e12071190284906e2a37159c2a162cdba0e67e0aad66c82658ec0c7f2a5a2cc38c3f61a892acd0da3a133ff9ead668873dc60c0310b5b0730445fea038d226980c2e6f7e4be9e895848d1fd97f2100db43004cb4eaddefc50601885c078170e6f13a1848e019ef88de2e7a3c1561d1828b3be0f290def9feebf54da94249472c0c0312050920fc8238dc861438a059b630e6ef256702d23cf92f32979f4fcd9ff3909cf7b32538aafb0e3a23ec40079b1d130c03103785c207e4c8201c5a072580e4e0
 ```
 
+which should give
 ```json
 {
   "jets": "core",
@@ -66,3 +139,5 @@ try running
   "is_redeem": false
 }
 ```
+
+> Once installed, you can use `pyhalsimplicity` in Python or run the `hal-simplicity` CLI directly.
