@@ -159,4 +159,4 @@ jobs:
 
       - name: Upload to PyPI
         run: |
-          twine upload wheels/**/*.whl -u __token__ -p ${{ secrets.COREMOON_GITHUB }}
+          twine upload wheels/**/*.whl -u __token__ -p ${{ secrets.COREMOON_GITHUB_PYHALSIMPLICITY }}
